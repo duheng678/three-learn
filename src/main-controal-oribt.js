@@ -13,8 +13,9 @@ const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerH
 const controls = new OrbitControls(camera, renderer.domElement)
 //设置带阻尼的惯性
 controls.enableDamping = true
-// controls.autoRotate = true
+controls.autoRotate = true
 
+//controls.update() must be called after any manual changes to the camera's transform
 camera.position.set(0, 20, 100)
 //创建渲染器
 
@@ -23,17 +24,10 @@ const geometry = new THREE.BoxGeometry(1, 1, 1)
 
 //创建材质
 const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 })
-const parentMaterial = new THREE.MeshBasicMaterial({ color: 0xff0000 })
 //创建网格
-let parentCube = new THREE.Mesh(geometry, parentMaterial)
-
 const cube = new THREE.Mesh(geometry, material)
-parentCube.add(cube)
-parentCube.position.set(-3, 0, 0)
-cube.position.set(3, 0, 0)
-// cube.position.z = 2
 
-scene.add(parentCube)
+scene.add(cube)
 
 camera.position.z = 5
 camera.position.y = 2
