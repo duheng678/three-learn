@@ -1,6 +1,5 @@
 import * as THREE from 'three'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
-import { GUI } from 'three/examples/jsm/libs/lil-gui.module.min.js'
 //创建场景
 const scene = new THREE.Scene()
 
@@ -8,7 +7,6 @@ const renderer = new THREE.WebGLRenderer()
 renderer.setSize(window.innerWidth, window.innerHeight)
 document.body.appendChild(renderer.domElement)
 
-renderer.setClearColor(0xffffff, 1.0)
 //创建相机
 const camera = new THREE.PerspectiveCamera(450, window.innerWidth / window.innerHeight, 0.1, 1000)
 //轨道控制器
@@ -24,9 +22,8 @@ camera.position.set(0, 20, 100)
 const geometry = new THREE.BoxGeometry(1, 1, 1)
 
 //创建材质
-const material = new THREE.MeshBasicMaterial({ color: 'chocolate' })
-const parentMaterial = new THREE.MeshBasicMaterial({ color: 'skyblue' })
-parentMaterial.wireframe = true
+const material = new THREE.MeshBasicMaterial({ color: 0xcccccc })
+const parentMaterial = new THREE.MeshBasicMaterial({ color: 0xeeeeee })
 //创建网格
 let parentCube = new THREE.Mesh(geometry, parentMaterial)
 
@@ -53,55 +50,11 @@ const axesHelper = new THREE.AxesHelper(5)
 scene.add(axesHelper)
 
 function animate() {
+  console.log('???')
+
   requestAnimationFrame(animate)
   controls.update()
 
   renderer.render(scene, camera)
 }
 animate()
-
-//监听窗口变化
-
-window.addEventListener('resize', () => {
-  //渲染器宽高
-  renderer.setSize(window.innerWidth, window.innerHeight)
-  //相机宽高比
-  camera.aspect = window.innerWidth / window.innerHeight
-  camera.updateProjectionMatrix()
-})
-//监听按钮
-
-const eventObj = {
-  Fullscreen: function () {
-    if (document.fullscreenElement) {
-      document.exitFullscreen()
-    } else {
-      document.body.requestFullscreen()
-    }
-  },
-}
-
-const gui = new GUI()
-gui.add(eventObj, 'Fullscreen').name(document.fullscreenElement ? '退出全屏' : '全屏')
-gui
-  .add(cube.position, 'x', -5, 5)
-  .name('cube立方体x轴')
-  .step(0.1)
-  .onChange(val => {
-    console.log(val)
-  })
-  .onFinishChange(() => {})
-gui.add(cube.position, 'y', -5, 5).name('cube立方体y轴').step(0.1)
-gui.add(cube.position, 'z', -5, 5).name('cube立方体z轴').step(0.1)
-
-gui.add(parentMaterial, 'wireframe').name('开启线框')
-
-let colorParams = {
-  cubeColor: '#ff0000',
-}
-gui
-  .addColor(colorParams, 'cubeColor')
-  .name('立方体颜色')
-  .onChange(val => {
-    cube.material.color.set(val)
-  })

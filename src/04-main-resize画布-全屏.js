@@ -1,6 +1,5 @@
 import * as THREE from 'three'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
-import { GUI } from 'three/examples/jsm/libs/lil-gui.module.min.js'
 //创建场景
 const scene = new THREE.Scene()
 
@@ -24,9 +23,8 @@ camera.position.set(0, 20, 100)
 const geometry = new THREE.BoxGeometry(1, 1, 1)
 
 //创建材质
-const material = new THREE.MeshBasicMaterial({ color: 'chocolate' })
-const parentMaterial = new THREE.MeshBasicMaterial({ color: 'skyblue' })
-parentMaterial.wireframe = true
+const material = new THREE.MeshBasicMaterial({ color: 0xcccccc })
+const parentMaterial = new THREE.MeshBasicMaterial({ color: 0xeeeeee })
 //创建网格
 let parentCube = new THREE.Mesh(geometry, parentMaterial)
 
@@ -53,6 +51,8 @@ const axesHelper = new THREE.AxesHelper(5)
 scene.add(axesHelper)
 
 function animate() {
+  console.log('???')
+
   requestAnimationFrame(animate)
   controls.update()
 
@@ -71,37 +71,24 @@ window.addEventListener('resize', () => {
 })
 //监听按钮
 
-const eventObj = {
-  Fullscreen: function () {
-    if (document.fullscreenElement) {
-      document.exitFullscreen()
-    } else {
-      document.body.requestFullscreen()
-    }
-  },
+const btn = document.createElement('button')
+btn.innerHTML = '全屏'
+btn.style.position = 'fixed'
+btn.style.top = '10px'
+btn.style.left = '10px'
+btn.style.zIndex = 999
+btn.onclick = () => {
+  document.body.requestFullscreen()
 }
+document.body.appendChild(btn)
 
-const gui = new GUI()
-gui.add(eventObj, 'Fullscreen').name(document.fullscreenElement ? '退出全屏' : '全屏')
-gui
-  .add(cube.position, 'x', -5, 5)
-  .name('cube立方体x轴')
-  .step(0.1)
-  .onChange(val => {
-    console.log(val)
-  })
-  .onFinishChange(() => {})
-gui.add(cube.position, 'y', -5, 5).name('cube立方体y轴').step(0.1)
-gui.add(cube.position, 'z', -5, 5).name('cube立方体z轴').step(0.1)
-
-gui.add(parentMaterial, 'wireframe').name('开启线框')
-
-let colorParams = {
-  cubeColor: '#ff0000',
+const exitBtn = document.createElement('button')
+exitBtn.innerHTML = '退出全屏'
+exitBtn.style.position = 'fixed'
+exitBtn.style.top = '10px'
+exitBtn.style.left = '100px'
+exitBtn.style.zIndex = 999
+exitBtn.onclick = () => {
+  document.exitFullscreen()
 }
-gui
-  .addColor(colorParams, 'cubeColor')
-  .name('立方体颜色')
-  .onChange(val => {
-    cube.material.color.set(val)
-  })
+document.body.appendChild(exitBtn)
