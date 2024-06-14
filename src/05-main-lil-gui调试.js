@@ -1,6 +1,5 @@
 import * as THREE from 'three'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
-import { Wireframe } from 'three/examples/jsm/Addons.js'
 import { GUI } from 'three/examples/jsm/libs/lil-gui.module.min.js'
 //创建场景
 const scene = new THREE.Scene()
@@ -9,7 +8,7 @@ const renderer = new THREE.WebGLRenderer()
 renderer.setSize(window.innerWidth, window.innerHeight)
 document.body.appendChild(renderer.domElement)
 
-// renderer.setClearColor(0xffffff, 1.0)
+renderer.setClearColor(0xffffff, 1.0)
 //创建相机
 const camera = new THREE.PerspectiveCamera(450, window.innerWidth / window.innerHeight, 0.1, 1000)
 //轨道控制器
@@ -22,31 +21,27 @@ camera.position.set(0, 20, 100)
 //创建渲染器
 
 //创建几何体
-const cubeGeometry = new THREE.BoxGeometry(1, 1, 1)
-const geometry = new THREE.BufferGeometry()
-//三个坐标为一个顶点，每三个为一个顶点，逆时针为正面
-const vertices = new Float32Array([-1.0, -1.0, 1.0, 1.0, -1.0, 1.0, 1.0, 1.0, 1.0, -1.0, 1.0, 1.0])
-geometry.setAttribute('position', new THREE.BufferAttribute(vertices, 3))
-//创建索引
-const indices = new Uint16Array([0, 1, 2, 2, 3, 0])
-geometry.setIndex(new THREE.BufferAttribute(indices, 1))
-console.log(cubeGeometry)
-console.log(geometry)
+const geometry = new THREE.BoxGeometry(1, 1, 1)
+
 //创建材质
-const material = new THREE.MeshBasicMaterial({
-  color: 'chocolate',
-  // side: THREE.DoubleSide,
-  wireframe: true,
-})
-
-// parentMaterial.wireframe = true
+const material = new THREE.MeshBasicMaterial({ color: 'chocolate' })
+const parentMaterial = new THREE.MeshBasicMaterial({ color: 'skyblue' })
+parentMaterial.wireframe = true
 //创建网格
-
+let parentCube = new THREE.Mesh(geometry, parentMaterial)
+console.log(geometry)
 const cube = new THREE.Mesh(geometry, material)
-scene.add(cube)
-// cube.position.set(3, 0, 0)
+parentCube.add(cube)
+parentCube.position.set(-9, 0, 0)
+cube.position.set(3, 0, 0)
+parentCube.rotation.x = Math.PI / 4
+cube.rotation.x = Math.PI / 4
 
-// cube.rotation.x = Math.PI / 4
+// cube.scale.set(2, 2, 2)
+parentCube.scale.set(2, 2, 2)
+// cube.position.z = 2
+
+scene.add(parentCube)
 
 camera.position.z = 5
 camera.position.y = 2
@@ -98,6 +93,8 @@ gui
   .onFinishChange(() => {})
 gui.add(cube.position, 'y', -5, 5).name('cube立方体y轴').step(0.1)
 gui.add(cube.position, 'z', -5, 5).name('cube立方体z轴').step(0.1)
+
+gui.add(parentMaterial, 'wireframe').name('开启线框')
 
 let colorParams = {
   cubeColor: '#ff0000',
