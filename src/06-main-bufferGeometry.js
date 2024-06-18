@@ -30,34 +30,24 @@ geometry.setAttribute('position', new THREE.BufferAttribute(vertices, 3))
 //创建索引
 const indices = new Uint16Array([0, 1, 2, 2, 3, 0])
 geometry.setIndex(new THREE.BufferAttribute(indices, 1))
-console.log(cubeGeometry)
-console.log(geometry)
+
 geometry.addGroup(0, 3, 0)
 geometry.addGroup(3, 3, 1)
+
+console.log(cubeGeometry)
+console.log(geometry)
 //创建材质
 const material = new THREE.MeshBasicMaterial({
   color: 'chocolate',
   // side: THREE.DoubleSide,
   // wireframe: true,
 })
-const material1 = new THREE.MeshBasicMaterial({
-  color: 'skyblue',
-})
-cubeGeometry.addGroup(0, 6, 0)
-cubeGeometry.addGroup(6, 6, 1)
-cubeGeometry.addGroup(12, 6, 0)
-cubeGeometry.addGroup(18, 6, 1)
-cubeGeometry.addGroup(24, 6, 0)
-cubeGeometry.addGroup(30, 6, 1)
 
 // parentMaterial.wireframe = true
 //创建网格
 
 const cube = new THREE.Mesh(geometry, [material, material1])
-const boxCube = new THREE.Mesh(cubeGeometry, [material, material1, material, material1, material, material1])
 scene.add(cube)
-scene.add(boxCube)
-boxCube.position.set(3, 0, 0)
 // cube.position.set(3, 0, 0)
 
 // cube.rotation.x = Math.PI / 4
