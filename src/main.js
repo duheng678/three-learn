@@ -2,6 +2,8 @@ import * as THREE from 'three'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
 import { Wireframe } from 'three/examples/jsm/Addons.js'
 import { GUI } from 'three/examples/jsm/libs/lil-gui.module.min.js'
+import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader.js'
+// import
 //创建场景
 const scene = new THREE.Scene()
 
@@ -21,43 +23,6 @@ controls.enableDamping = true
 camera.position.set(0, 20, 100)
 //创建渲染器
 
-//创建几何体
-const cubeGeometry = new THREE.BoxGeometry(1, 1, 1)
-const geometry = new THREE.BufferGeometry()
-//三个坐标为一个顶点，每三个为一个顶点，逆时针为正面
-const vertices = new Float32Array([-1.0, -1.0, 1.0, 1.0, -1.0, 1.0, 1.0, 1.0, 1.0, -1.0, 1.0, 1.0])
-geometry.setAttribute('position', new THREE.BufferAttribute(vertices, 3))
-//创建索引
-const indices = new Uint16Array([0, 1, 2, 2, 3, 0])
-geometry.setIndex(new THREE.BufferAttribute(indices, 1))
-console.log(cubeGeometry)
-console.log(geometry)
-geometry.addGroup(0, 3, 0)
-geometry.addGroup(3, 3, 1)
-//创建材质
-const material = new THREE.MeshBasicMaterial({
-  color: 'chocolate',
-  // side: THREE.DoubleSide,
-  // wireframe: true,
-})
-const material1 = new THREE.MeshBasicMaterial({
-  color: 'skyblue',
-})
-cubeGeometry.addGroup(0, 6, 0)
-cubeGeometry.addGroup(6, 6, 1)
-cubeGeometry.addGroup(12, 6, 0)
-cubeGeometry.addGroup(18, 6, 1)
-cubeGeometry.addGroup(24, 6, 0)
-cubeGeometry.addGroup(30, 6, 1)
-
-// parentMaterial.wireframe = true
-//创建网格
-
-const cube = new THREE.Mesh(geometry, [material, material1])
-const boxCube = new THREE.Mesh(cubeGeometry, [material, material1, material, material1, material, material1])
-scene.add(cube)
-scene.add(boxCube)
-boxCube.position.set(3, 0, 0)
 // cube.position.set(3, 0, 0)
 
 // cube.rotation.x = Math.PI / 4
@@ -90,35 +55,15 @@ window.addEventListener('resize', () => {
 })
 //监听按钮
 
-const eventObj = {
-  Fullscreen: function () {
-    if (document.fullscreenElement) {
-      document.exitFullscreen()
-    } else {
-      document.body.requestFullscreen()
-    }
-  },
-}
-
+const BoxGeometry = new THREE.BoxGeometry(1, 1, 100)
+const boxMaterial = new THREE.MeshBasicMaterial({
+  color: 0x00ff00,
+})
+const box = new THREE.Mesh(BoxGeometry, boxMaterial)
+scene.add(box)
 const gui = new GUI()
-gui.add(eventObj, 'Fullscreen').name(document.fullscreenElement ? '退出全屏' : '全屏')
-gui
-  .add(cube.position, 'x', -5, 5)
-  .name('cube立方体x轴')
-  .step(0.1)
-  .onChange(val => {
-    console.log(val)
-  })
-  .onFinishChange(() => {})
-gui.add(cube.position, 'y', -5, 5).name('cube立方体y轴').step(0.1)
-gui.add(cube.position, 'z', -5, 5).name('cube立方体z轴').step(0.1)
 
-let colorParams = {
-  cubeColor: '#ff0000',
-}
-gui
-  .addColor(colorParams, 'cubeColor')
-  .name('立方体颜色')
-  .onChange(val => {
-    cube.material.color.set(val)
-  })
+//创建fog场景
+// scene.fog = new THREE.Fog(0x999999, 0.1, 50)//线性
+scene.fog = new THREE.FogExp2(0x999999, 0.1) //指数
+scene.background = new THREE.Color(0x999999)
