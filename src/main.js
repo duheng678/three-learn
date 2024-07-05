@@ -3,6 +3,8 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
 import { Wireframe } from 'three/examples/jsm/Addons.js'
 import { GUI } from 'three/examples/jsm/libs/lil-gui.module.min.js'
 import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader.js'
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
+import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js'
 // import
 //创建场景
 const scene = new THREE.Scene()
@@ -55,15 +57,44 @@ window.addEventListener('resize', () => {
 })
 //监听按钮
 
-const BoxGeometry = new THREE.BoxGeometry(1, 1, 100)
-const boxMaterial = new THREE.MeshBasicMaterial({
-  color: 0x00ff00,
-})
-const box = new THREE.Mesh(BoxGeometry, boxMaterial)
-scene.add(box)
 const gui = new GUI()
 
-//创建fog场景
-// scene.fog = new THREE.Fog(0x999999, 0.1, 50)//线性
-scene.fog = new THREE.FogExp2(0x999999, 0.1) //指数
-scene.background = new THREE.Color(0x999999)
+//创建三个球
+const sphere1 = new THREE.Mesh(
+  new THREE.SphereGeometry(1, 32, 32),
+  new THREE.MeshBasicMaterial({
+    color: 0x00ff00,
+  })
+)
+
+sphere1.position.set(-2, 0, 0)
+scene.add(sphere1)
+
+const sphere2 = new THREE.Mesh(
+  new THREE.SphereGeometry(1, 32, 32),
+  new THREE.MeshBasicMaterial({
+    color: 0x0000ff,
+  })
+)
+
+scene.add(sphere2)
+
+const sphere3 = new THREE.Mesh(
+  new THREE.SphereGeometry(1, 32, 32),
+  new THREE.MeshBasicMaterial({
+    color: 0x0000ff,
+  })
+)
+
+sphere3.position.set(2, 0, 0)
+scene.add(sphere3)
+
+//创建射线
+const raycaster = new THREE.Raycaster()
+
+// 创建鼠标向量
+const mouse = new THREE.Vector2()
+
+window.addEventListener('click', e => {
+  console.log(e.clientX, e.clientY)
+})
