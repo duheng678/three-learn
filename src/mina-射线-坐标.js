@@ -3,7 +3,6 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
 import { Wireframe } from 'three/examples/jsm/Addons.js'
 import { GUI } from 'three/examples/jsm/libs/lil-gui.module.min.js'
 import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader.js'
-import * as TWEEN from 'three/examples/jsm/libs/tween.module.js'
 // import
 //创建场景
 const scene = new THREE.Scene()
@@ -42,7 +41,6 @@ function animate() {
   controls.update()
 
   renderer.render(scene, camera)
-  TWEEN.update()
 }
 animate()
 
@@ -59,30 +57,41 @@ window.addEventListener('resize', () => {
 
 const gui = new GUI()
 
-// 创建1个小球
+// 创建三个小球
 const sphere1 = new THREE.Mesh(new THREE.SphereGeometry(1, 32, 32), new THREE.MeshBasicMaterial({ color: 0xffff00 }))
 sphere1.position.x = -4
 scene.add(sphere1)
+const sphere2 = new THREE.Mesh(new THREE.SphereGeometry(1, 32, 32), new THREE.MeshBasicMaterial({ color: 0x00ff00 }))
+scene.add(sphere2)
+const sphere3 = new THREE.Mesh(new THREE.SphereGeometry(1, 32, 32), new THREE.MeshBasicMaterial({ color: 0x0000ff }))
+sphere3.position.x = 4
+scene.add(sphere3)
 
-const tween = new TWEEN.Tween(sphere1.position)
-tween.to({ x: 4 }, 1000).onUpdate(() => {
-  // console.log(sphere1.position.x)
+//创建射线
+const raycaster = new THREE.Raycaster()
+
+//创建鼠标响亮
+const mouse = new THREE.Vector2()
+console.log(scene)
+window.addEventListener('click', e => {
+  //获取点击位置
+  mouse.x = (e.clientX / window.innerWidth) * 2 - 1
+  mouse.y = -(e.clientY / window.innerHeight) * 2 + 1
+  console.log(mouse.x, mouse.y)
+  //通过摄像机和鼠标位置更新射线
+  raycaster.setFromCamera(mouse, camera)
+  //计算物体和射线的焦点
+  const intersects = raycaster.intersectObjects([sphere1, sphere2, sphere3])
+  console.log(intersects)
+  if (intersects.length > 0) {
+    if (intersects[0].object._isSelect) {
+      intersects[0].object.material.color.set(intersects[0].object._originColor)
+      intersects[0].object._isSelect = false
+      return
+    }
+    // console.log(intersects[0].object)
+    intersects[0].object._originColor = intersects[0].object.material.color.getHex()
+    intersects[0].object.material.color.set(0xff0000)
+    intersects[0].object._isSelect = true
+  }
 })
-// tween.repeat(Infinity)
-tween.easing(TWEEN.Easing.Quadratic.InOut)
-// tween.yoyo(true).delay(1000).
-//启动补间动画
-tween.start()
-
-const tween2 = new TWEEN.Tween(sphere1.position)
-tween2.to({ x: -4 }, 1000)
-tween.chain(tween2)
-tween2.chain(tween)
-setTimeout(() => {
-  // tween.stop()
-  tween.stop()
-  setTimeout(() => {
-    // tween.stop()
-    tween.resume()
-  }, 2500)
-}, 2500)
