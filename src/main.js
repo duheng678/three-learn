@@ -1,14 +1,11 @@
 import * as THREE from 'three'
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
-import { Wireframe } from 'three/examples/jsm/Addons.js'
+import { VertexNormalsHelper, Wireframe } from 'three/examples/jsm/Addons.js'
 import { GUI } from 'three/examples/jsm/libs/lil-gui.module.min.js'
 import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader.js'
-<<<<<<< HEAD
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js'
-=======
-import * as TWEEN from 'three/examples/jsm/libs/tween.module.js'
->>>>>>> d684f6bf0e786cdd4040448f806d390c042d06ef
+import { DoubleSide } from 'three/src/constants.js'
 // import
 //创建场景
 const scene = new THREE.Scene()
@@ -39,7 +36,7 @@ camera.position.set(2, 2, 5)
 // camera.lookAt(1, 0, 0)
 
 //添加世界坐标辅助线
-const axesHelper = new THREE.AxesHelper(5)
+const axesHelper = new THREE.AxesHelper(6)
 scene.add(axesHelper)
 
 function animate() {
@@ -47,7 +44,7 @@ function animate() {
   controls.update()
 
   renderer.render(scene, camera)
-  TWEEN.update()
+  // TWEEN.update()
 }
 animate()
 
@@ -63,31 +60,30 @@ window.addEventListener('resize', () => {
 //监听按钮
 
 const gui = new GUI()
+const textureLoader = new THREE.TextureLoader()
 
-// 创建1个小球
-const sphere1 = new THREE.Mesh(new THREE.SphereGeometry(1, 32, 32), new THREE.MeshBasicMaterial({ color: 0xffff00 }))
-sphere1.position.x = -4
-scene.add(sphere1)
+let texture = textureLoader.load('./tem/texture/uv_grid_opengl.jpg')
+// 创建平面
 
-const tween = new TWEEN.Tween(sphere1.position)
-tween.to({ x: 4 }, 1000).onUpdate(() => {
-  // console.log(sphere1.position.x)
+// 创建几何体
+
+// self.translate(3)
+//创建法向量辅助线
+
+scene.add(self)
+// 加载hdr
+const rgbeLoader = new RGBELoader()
+rgbeLoader.load('./textures/hdr/003.hdr', envMap => {
+  envMap.mapping = THREE.EquirectangularReflectionMapping
+  //设置环境贴图
+  scene.background = envMap
+  scene.environment = envMap
+  //设置plane的环境贴图
 })
-// tween.repeat(Infinity)
-tween.easing(TWEEN.Easing.Quadratic.InOut)
-// tween.yoyo(true).delay(1000).
-//启动补间动画
-tween.start()
 
-const tween2 = new TWEEN.Tween(sphere1.position)
-tween2.to({ x: -4 }, 1000)
-tween.chain(tween2)
-tween2.chain(tween)
-setTimeout(() => {
-  // tween.stop()
-  tween.stop()
-  setTimeout(() => {
-    // tween.stop()
-    tween.resume()
-  }, 2500)
-}, 2500)
+const gltfLoader = new GLTFLoader()
+
+gltfLoader.load('./tem/model/Duck.glb', gltf => {
+  scene.add(gltf.scene)
+})
+console.log(scene)

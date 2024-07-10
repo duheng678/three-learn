@@ -23,6 +23,7 @@ camera.position.set(0, 20, 100)
 
 //创建几何体
 const cubeGeometry = new THREE.BoxGeometry(1, 1, 1)
+
 const geometry = new THREE.BufferGeometry()
 //三个坐标为一个顶点，每三个为一个顶点，逆时针为正面
 const vertices = new Float32Array([-1.0, -1.0, 1.0, 1.0, -1.0, 1.0, 1.0, 1.0, 1.0, -1.0, 1.0, 1.0])
