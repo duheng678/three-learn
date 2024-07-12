@@ -5,38 +5,23 @@ import { GUI } from 'three/examples/jsm/libs/lil-gui.module.min.js'
 import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader.js'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js'
-import { DoubleSide } from 'three/src/constants.js'
 // import
 //创建场景
 const scene = new THREE.Scene()
-
+//创建渲染器
 const renderer = new THREE.WebGLRenderer()
 renderer.setSize(window.innerWidth, window.innerHeight)
 document.body.appendChild(renderer.domElement)
-
-// renderer.setClearColor(0xffffff, 1.0)
 //创建相机
-const camera = new THREE.PerspectiveCamera(450, window.innerWidth / window.innerHeight, 0.1, 1000)
+const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000)
 //轨道控制器
 const controls = new OrbitControls(camera, renderer.domElement)
 //设置带阻尼的惯性
 controls.enableDamping = true
 // controls.autoRotate = true
-
-camera.position.set(2, 2, 5)
-//创建渲染器
-
-// cube.position.set(3, 0, 0)
-
-// cube.rotation.x = Math.PI / 4
-
-// camera.position.z = 5
-// camera.position.y = 2
-// camera.position.x = 2
-// camera.lookAt(1, 0, 0)
-
-//添加世界坐标辅助线
-const axesHelper = new THREE.AxesHelper(6)
+camera.position.set(20, 10, 200)
+// 创建世界坐标
+const axesHelper = new THREE.AxesHelper(9999)
 scene.add(axesHelper)
 
 function animate() {
@@ -47,43 +32,52 @@ function animate() {
   // TWEEN.update()
 }
 animate()
+// 创建三个小球
+// const gltfLoader = new GLTFLoader()
 
-//监听窗口变化
+// const dracoLoader = new DRACOLoader()
+// dracoLoader.setDecoderPath('/draco/')
 
-window.addEventListener('resize', () => {
-  //渲染器宽高
-  renderer.setSize(window.innerWidth, window.innerHeight)
-  //相机宽高比
-  camera.aspect = window.innerWidth / window.innerHeight
-  camera.updateProjectionMatrix()
-})
-//监听按钮
+// gltfLoader.setDRACOLoader(dracoLoader)
 
-const gui = new GUI()
-const textureLoader = new THREE.TextureLoader()
-
-let texture = textureLoader.load('./tem/texture/uv_grid_opengl.jpg')
-// 创建平面
-
-// 创建几何体
-
-// self.translate(3)
-//创建法向量辅助线
-
-scene.add(self)
-// 加载hdr
-const rgbeLoader = new RGBELoader()
-rgbeLoader.load('./textures/hdr/003.hdr', envMap => {
-  envMap.mapping = THREE.EquirectangularReflectionMapping
-  //设置环境贴图
-  scene.background = envMap
-  scene.environment = envMap
-  //设置plane的环境贴图
-})
+const dracoLoader = new DRACOLoader()
+dracoLoader.setDecoderPath('/draco/')
+//实例化加载器
 
 const gltfLoader = new GLTFLoader()
-
-gltfLoader.load('./tem/model/Duck.glb', gltf => {
-  scene.add(gltf.scene)
+gltfLoader.setDRACOLoader(dracoLoader)
+gltfLoader.load('./gltf/Horse.glb', gltf => {
+  console.log(gltf)
+  // scene.add(gltf.scene)
+  const building = gltf.scene.children[0]
+  const geometry = building.geometry
+  //获取边缘几何体geometry
+  const edges = new THREE.EdgesGeometry(geometry)
+  const line = new THREE.LineSegments(edges, new THREE.LineBasicMaterial({ color: 0x237790 }))
+  //更新建筑物世界转换矩阵
+  building.updateWorldMatrix(true, true)
+  line.matrix.copy(building.matrixWorld)
+  line.matrix.decompose(line.position, line.quaternion, line.scale)
+  scene.add(line)
 })
-console.log(scene)
+gltfLoader.load('./gltf/Flamingo.glb', gltf => {
+  scene.add(gltf.scene)
+
+  const building = gltf.scene.children[0]
+  const geometry = building.geometry
+  //获取边缘几何体geometry
+  const edges = new THREE.EdgesGeometry(geometry)
+  const line = new THREE.LineSegments(edges, new THREE.LineBasicMaterial({ color: 0x237790 }))
+  //更新建筑物世界转换矩阵
+  // building.updateWorldMatrix(true, true)
+  // line.matrix.copy(building.matrixWorld)
+  // line.matrix.decompose(line.position, line.quaternion, line.scale)
+  scene.add(line)
+})
+const rgbeLoader = new RGBELoader()
+rgbeLoader.load('/textures/hdr/003.hdr', envMap => {
+  envMap.mapping = THREE.EquirectangularReflectionMapping
+
+  scene.background = envMap
+  scene.environment = envMap
+})
