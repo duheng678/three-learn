@@ -30,55 +30,24 @@ scene.add(axesHelper)
 function animate() {
   requestAnimationFrame(animate)
   controls.update()
-
   renderer.render(scene, camera)
-  // TWEEN.update()
+  //清除场景中物体
 }
 animate()
-// 创建三个小球
-// const gltfLoader = new GLTFLoader()
-
-// const dracoLoader = new DRACOLoader()
-// dracoLoader.setDecoderPath('/draco/')
-
-// gltfLoader.setDRACOLoader(dracoLoader)
-const gui = new GUI()
-let params = {
-  aoMap: true,
-}
-
-const textureLoader = new THREE.TextureLoader()
-const colorTexture = textureLoader.load('./tem/texture/watercover/CityNewYork002_COL_VAR1_1K.png')
-colorTexture.colorSpace = THREE.SRGBColorSpace
-const dracoLoader = new DRACOLoader()
-dracoLoader.setDecoderPath('/draco/')
-//实例化加载器
-
-const gltfLoader = new GLTFLoader()
-gltfLoader.setDRACOLoader(dracoLoader)
 
 const rgbeLoader = new RGBELoader()
-rgbeLoader.load('/tem/texture/Alex_Hart-Nature_Lab_Bones_2k.hdr', envMap => {
-  // envMap.mapping = THREE.EquirectangularReflectionMapping
+rgbeLoader.load('./tem/texture/Alex_Hart-Nature_Lab_Bones_2k.hdr', envMap => {
   envMap.mapping = THREE.EquirectangularRefractionMapping
-  scene.background = envMap
 
+  scene.background = envMap
   scene.environment = envMap
-  // plainMaterial.envMap = envMap
-  // 创建立方体
-  const geometry = new THREE.BoxGeometry(1, 1, 1)
-  const material = new THREE.MeshPhysicalMaterial({
-    color: 0xffffff,
-    transparent: true,
-    transmission: 1,
-    roughness: 0.05,
-    thickness: 2,
-    attenuationColor: new THREE.Color(0.6, 0, 0),
-    attenuationDistance: 10,
+
+  const gltfLoader = new GLTFLoader()
+  const dracoLoader = new DRACOLoader()
+  gltfLoader.setDRACOLoader(dracoLoader)
+
+  gltfLoader.load('./model/damon/diamond-self.glb', gltf => {
+    scene.add(gltf.scene)
+    const diamond = gltf.scene.getObjectByName('diamond')
   })
-  const cube = new THREE.Mesh(geometry, material)
-  scene.add(cube)
-  gui.add(cube.material, 'attenuationDistance').min(0).max(100).step(1).name('衰减距离')
-  gui.add(cube.material, 'thickness').min(0).max(100).step(1).name('厚度')
 })
-//创建环境光
