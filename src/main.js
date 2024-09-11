@@ -19,10 +19,19 @@ document.body.appendChild(renderer.domElement)
 const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000)
 //轨道控制器
 const controls = new OrbitControls(camera, renderer.domElement)
+controls.target.set(0, 1.2, 0)
 //设置带阻尼的惯性
 controls.enableDamping = true
+controls.enablePan = false
+controls.maxDistance = 1
+controls.minDistance = 1
+// controls.minPolarAngle = Math.PI / 2 - Math.PI / 12
+// controls.maxPolarAngle = Math.PI / 2
+// controls.maxAzimuthAngle = Math.PI / 2 + Math.PI / 12
+// controls.minAzimuthAngle = Math.PI / 2 - Math.PI / 12
 // controls.autoRotate = true
-camera.position.set(5, 5, 5)
+camera.position.set(4, 1.2, 0)
+camera.lookAt(0, 1.2, 0)
 // 创建世界坐标
 const axesHelper = new THREE.AxesHelper(9999)
 scene.add(axesHelper)
@@ -34,7 +43,7 @@ function animate() {
   //清除场景中物体
 }
 animate()
-
+//实例加载器
 const rgbeLoader = new RGBELoader()
 rgbeLoader.load('./tem/texture/Alex_Hart-Nature_Lab_Bones_2k.hdr', envMap => {
   envMap.mapping = THREE.EquirectangularRefractionMapping
@@ -44,10 +53,19 @@ rgbeLoader.load('./tem/texture/Alex_Hart-Nature_Lab_Bones_2k.hdr', envMap => {
 
   const gltfLoader = new GLTFLoader()
   const dracoLoader = new DRACOLoader()
+  //设置gltf加载器draco解码器
   gltfLoader.setDRACOLoader(dracoLoader)
 
-  gltfLoader.load('./model/damon/diamond-self.glb', gltf => {
+  gltfLoader.load('./scene/liveroom.glb', gltf => {
+    console.log(gltf.scene)
+
+    // const diamond = gltf.scene.getObjectByName('iphone.glb')
+    // diamond.material.flatShading = true
+
     scene.add(gltf.scene)
-    const diamond = gltf.scene.getObjectByName('diamond')
   })
 })
+const loader = new THREE.ObjectLoader()
+// loader.load('./scene/model.obj', gltf => {
+//   console.log(gltf)
+// })
