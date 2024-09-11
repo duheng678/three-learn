@@ -61,25 +61,27 @@ animate()
 //   })
 // })
 const loader = new THREE.TextureLoader()
-const plainMap = loader.load('./tem/texture/uv_grid_opengl.jpg')
-const rainTexture = loader.load('./textures/rain.png')
+const plainMap = loader.load('./textures/amber/base_color.jpg')
 const plainMaterial = new THREE.MeshBasicMaterial({
   color: 0xffffff,
-  map: rainTexture,
-  transparent: true,
+  map: plainMap,
 })
 const geometry = new THREE.PlaneGeometry(1, 1)
 
 const plain = new THREE.Mesh(geometry, plainMaterial)
 
 // plain.position.set(0, 1, 1)
+plain.rotation.y = Math.PI / 2
 scene.add(plain)
-// plainMap.flipY = true
-// plainMap.premultiplyAlpha = true
-scene.background = new THREE.Color('rgb(255, 255, 255)')
+//纹理重复
+// plainMap.repeat.set(4, 4)
+// 水平方向重复 镜像
+// plainMap.wrapS = THREE.MirroredRepeatWrapping
+// // 垂直方向重复
+// plainMap.wrapT = THREE.RepeatWrapping
 
-const gui = new GUI()
-gui
-  .add(rainTexture, 'premultiplyAlpha')
-  .name('premultiplyAlpha')
-  .onChange(() => (rainTexture.needsUpdate = true))
+//纹理偏移
+// plainMap.offset.set(0.5, 0.5)
+// 纹理旋转
+plainMap.rotation = Math.PI / 4
+plainMap.center.set(0.5, 0.5)
